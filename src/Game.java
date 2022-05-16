@@ -1,14 +1,10 @@
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.*;
-import java.io.File;
-import java.io.FileWriter ;
 import java.util.Scanner;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.util.stream.Stream;
 
 public class Game {
     private String username;
@@ -27,6 +23,15 @@ public class Game {
         gameBoard = startBoard(60, 45);
     }
 
+    //Constructor used for testing
+    public Game(String user, ArrayList<Letter> board) {
+        username = user;
+        score = 0;
+        letters = constructLetters();
+        userWords = new ArrayList<String>();
+        gameBoard = board;
+    }
+
     public ArrayList<Letter> getGameBoard() {
         return gameBoard;
     }
@@ -35,8 +40,35 @@ public class Game {
         Collections.shuffle(gameBoard);
     }
 
-    public boolean check(String word) {
-        //Check if all letters in word are present in gameBoard
+    public void updateBoard(String word) {
+        if (check(word)) {
+            System.out.println("uwu");
+        }
+    }
+
+    public String toString() {
+        String board = "=========================================";
+        int count = 0;
+        for (Letter let : gameBoard) {
+            if (count % 20 == 0) {
+                board += "\n ";
+            }
+            board += let.getLetter() + " ";
+            count++;
+        }
+        board += "\n=========================================\n";
+
+        String data = "Player: " + username + "\nWordlist: \n";
+        for (int i = 0; i < userWords.size(); i++) {
+            data += (i + 1) + ". " + userWords.get(i) + "\n";
+        }
+        data += "Current Score: " + score + "\n";
+
+        return board + data;
+    }
+
+    private boolean check(String word) {
+        word = word.toUpperCase();
         boolean isPresent = false;
 
         //String array of all the letters in word
@@ -60,38 +92,30 @@ public class Game {
         }
 
         //Check is word is a legitimate English word
+        word = word.toLowerCase();
         boolean isValid = false;
+
         try {
             //opens file and starts reading
             File dictionary = new File("src/Dictionary");
             Scanner scan = new Scanner(dictionary);
-            while(scan.hasNextLine()) {
 
-                //finds number of lines in Dictionary
-                long numberOfLines = 0;
-                Path path = Paths.get("Dictionary");
-                try {
-                    numberOfLines = Files.lines(path).count();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            while(scan.hasNextLine()) {
 
                 //Binary search to find if a line in Dictionary matches target word
                 String line = "";
-                long bottom = 0;
-                long top = numberOfLines;
-                long middle;
+                int bottom = 0;
+                int top = 3000; //Total number of lines in Dictionary
+                int middle;
+
                 while (bottom <= top){
-                    middle = (bottom + top)/2;
-
-                    try (Stream<String> lines = Files.lines(Paths.get("file.txt"))) {
-                        line = lines.skip(middle - 1).findFirst().get();
-
+                    middle = (bottom + top) / 2;
+                    try {
+                        line = Files.readAllLines(Paths.get("src/Dictionary")).get(middle).toLowerCase();
                     }
-                    catch(IOException e){
+                    catch(IOException e) {
                         e.printStackTrace();
+                        return false;
                     }
 
                     int compare = line.compareTo(word);
@@ -115,28 +139,6 @@ public class Game {
             return false;
         }
         return false;
-    }
-
-
-    public String toString() {
-        String board = "=========================================";
-        int count = 0;
-        for (Letter let : gameBoard) {
-            if (count % 20 == 0) {
-                board += "\n ";
-            }
-            board += let.getLetter() + " ";
-            count++;
-        }
-        board += "\n=========================================\n";
-
-        String data = "Player: " + username + "\nWordlist: \n";
-        for (int i = 0; i < userWords.size(); i++) {
-            data += (i + 1) + ". " + userWords.get(i) + "\n";
-        }
-        data += "Current Score: " + score + "\n";
-
-        return board + data;
     }
 
     private Letter[] constructLetters() {
