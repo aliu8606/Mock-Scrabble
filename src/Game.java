@@ -1,12 +1,13 @@
 import java.io.*;
 import java.nio.file.Files;
+import java.io.FileWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.*;
 import java.util.Scanner;
 
-public class Game {
+public class Game implements Comparable<Game>{
     private String username;
     private int score;
     private Letter[] letters;
@@ -32,17 +33,65 @@ public class Game {
         gameBoard = board;
     }
 
-    public ArrayList<Letter> getGameBoard() {
-        return gameBoard;
+    //Constructor used for saving
+    public Game(String user, int scr) {
+        username = user;
+        score = scr;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public void shuffle() {
         Collections.shuffle(gameBoard);
     }
 
-    public void updateBoard(String word) {
+    public String updateBoard(String word) {
         if (check(word)) {
-            System.out.println("uwu");
+            word = word.toUpperCase();
+            String[] chars = word.split("");
+
+            for (String chr : chars) {
+                for (int i = 0; i < gameBoard.size(); i++) {
+                    if (chr.equals(gameBoard.get(i).getLetter())) {
+                        //Updating score
+                        score += gameBoard.get(i).getPoints();
+
+                        //Removing Letter from board
+                        gameBoard.remove(i);
+                        i--;
+                        break;
+                    }
+                }
+            }
+
+            //Points are also given for length of the word
+            score += chars.length;
+
+            //Adds word to userWords
+            word = word.toLowerCase();
+            userWords.add(word);
+
+            return toString();
+        }
+
+        return word + " is not a valid word";
+    }
+
+    public void saveGame() {
+        try {
+            FileWriter writer = new FileWriter("PrevGames.txt", true);
+            String gameData = username + "|" + score + "\n";
+            writer.append(gameData);
+            writer.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -65,6 +114,11 @@ public class Game {
         data += "Current Score: " + score + "\n";
 
         return board + data;
+    }
+
+    @Override
+    public int compareTo(Game other) {
+        return other.getScore() - this.getScore();
     }
 
     private boolean check(String word) {
