@@ -1,7 +1,6 @@
 import java.io.*;
 import java.nio.file.Files;
 import java.io.FileWriter;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.*;
@@ -13,6 +12,7 @@ public class Game implements Comparable<Game>{
     private Letter[] letters;
     private ArrayList<String> userWords;
     private ArrayList<Letter> gameBoard;
+    private final int DICTION_LEN = 3000;
 
     public Game(String user) {
         username = user;
@@ -159,7 +159,7 @@ public class Game implements Comparable<Game>{
                 //Binary search to find if a line in Dictionary matches target word
                 String line = "";
                 int bottom = 0;
-                int top = 3000; //Total number of lines in Dictionary
+                int top = DICTION_LEN;
                 int middle;
 
                 while (bottom <= top){
