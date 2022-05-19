@@ -47,6 +47,10 @@ public class Game implements Comparable<Game>{
         return score;
     }
 
+    public ArrayList<Letter> getGameBoard() {
+        return gameBoard;
+    }
+
     public void shuffle() {
         Collections.shuffle(gameBoard);
     }
@@ -80,7 +84,7 @@ public class Game implements Comparable<Game>{
             return toString();
         }
 
-        return word + " is not a valid word";
+        return this + "\n" + word + " is not a valid word\n";
     }
 
     public void saveGame() {

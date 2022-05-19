@@ -10,7 +10,8 @@ public class Tester {
 
 
         Game newGame = new Game("uwu", testBoard);
-        System.out.println(newGame);
+        GUIController gui = new GUIController(newGame);
+        /*System.out.println(newGame);
 
         //Valid word, score 8
         System.out.println(newGame.updateBoard("cat"));
@@ -27,6 +28,6 @@ public class Tester {
         newGame2.saveGame();
 
         Scoreboard scoreboard = new Scoreboard();
-        System.out.println(scoreboard);
+        System.out.println(scoreboard); */
     }
 }

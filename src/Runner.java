@@ -31,9 +31,12 @@ public class Runner {
                     System.out.print("What would you like your username to be? ");
                     String name = input.nextLine();
                     Game newGame = new Game(name);
+
                     System.out.println(newGame);
                     System.out.println(gameMenu);
+
                     String gameOption = input.nextLine().toUpperCase();
+
                     while (!gameOption.equals("X")) {
                         if (gameOption.equals("F")) {
                             newGame.shuffle();
