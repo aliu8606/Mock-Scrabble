@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class Tester {
     public static void main(String[] args) {
+
         ArrayList<Letter> testBoard = new ArrayList<Letter>();
         testBoard.add(new Letter("C", 3));
         testBoard.add(new Letter("A", 1));
@@ -11,6 +12,8 @@ public class Tester {
 
         Game newGame = new Game("uwu", testBoard);
         GUIController gui = new GUIController(newGame);
+
+
         /*System.out.println(newGame);
 
         //Valid word, score 8

@@ -9,19 +9,25 @@ import java.util.Scanner;
 public class Game implements Comparable<Game>{
     private String username;
     private int score;
+    private boolean hardMode;
     private Letter[] letters;
     private ArrayList<String> userWords;
     private ArrayList<Letter> gameBoard;
     private final int DICTION_LEN = 3000;
 
-    public Game(String user) {
+    public Game(String user, boolean diffHard) {
         username = user;
         score = 0;
         letters = constructLetters();
         userWords = new ArrayList<String>();
 
-        //maybe add user customization in numTotal and numEasy?
-        gameBoard = startBoard(60, 45);
+        hardMode = diffHard;
+        if (hardMode) {
+            gameBoard = startBoard(50, 20);
+        }
+        else {
+            gameBoard = startBoard(60, 45);
+        }
     }
 
     //Constructor used for testing
@@ -34,9 +40,10 @@ public class Game implements Comparable<Game>{
     }
 
     //Constructor used for saving
-    public Game(String user, int scr) {
+    public Game(String user, int scr, boolean hard) {
         username = user;
         score = scr;
+        hardMode = hard;
     }
 
     public String getUsername() {
@@ -47,8 +54,8 @@ public class Game implements Comparable<Game>{
         return score;
     }
 
-    public ArrayList<Letter> getGameBoard() {
-        return gameBoard;
+    public boolean isHardMode() {
+        return hardMode;
     }
 
     public void shuffle() {
@@ -56,6 +63,7 @@ public class Game implements Comparable<Game>{
     }
 
     public String updateBoard(String word) {
+        //Checks if word is a valid word to play
         if (check(word)) {
             word = word.toUpperCase();
             String[] chars = word.split("");
@@ -90,7 +98,7 @@ public class Game implements Comparable<Game>{
     public void saveGame() {
         try {
             FileWriter writer = new FileWriter("PrevGames.txt", true);
-            String gameData = username + "|" + score + "\n";
+            String gameData = username + "|" + score + "," + hardMode + "\n";
             writer.append(gameData);
             writer.close();
         }
@@ -102,6 +110,8 @@ public class Game implements Comparable<Game>{
     public String toString() {
         String board = "=========================================";
         int count = 0;
+
+        //Formats Letter display
         for (Letter let : gameBoard) {
             if (count % 20 == 0) {
                 board += "\n ";
@@ -111,6 +121,7 @@ public class Game implements Comparable<Game>{
         }
         board += "\n=========================================\n";
 
+        //Formats Game data
         String data = "Player: " + username + "\nWordlist: \n";
         for (int i = 0; i < userWords.size(); i++) {
             data += (i + 1) + ". " + userWords.get(i) + "\n";
@@ -159,7 +170,6 @@ public class Game implements Comparable<Game>{
             Scanner scan = new Scanner(dictionary);
 
             while(scan.hasNextLine()) {
-
                 //Binary search to find if a line in Dictionary matches target word
                 String line = "";
                 int bottom = 0;

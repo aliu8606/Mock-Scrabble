@@ -1,28 +1,22 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.Image;
-import java.awt.Color;
-import java.awt.Font;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EtchedBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
 
 import static java.awt.Color.white;
 
 public class GUIController implements ActionListener{
-    private JTextArea gameBoard;
+    private JEditorPane gameBoard;
     private JTextField wordEntry;
     private Game currGame;
     private JFrame frame;
 
     public GUIController(Game g) {
-        gameBoard = new JTextArea(20, 60);
+        gameBoard = new JEditorPane();
         currGame = g;
         frame = new JFrame("Welcome to mock-Scrabble!");
 
@@ -37,7 +31,7 @@ public class GUIController implements ActionListener{
             public void windowClosing(WindowEvent e) {
                 currGame.saveGame();
                 frame.dispose();
-                System.exit(0);
+                System.out.println("\nWhew! What a game!");
             }
         });
 
@@ -45,9 +39,20 @@ public class GUIController implements ActionListener{
         JPanel gamePanel = new JPanel();
 
         gameBoard.setText(currGame.toString());
+        gameBoard.setPreferredSize(new Dimension(1000, 500));
+        gameBoard.setEditable(false);
         gameBoard.setFont(new Font("SansSerif", Font.PLAIN, 20));
-        gameBoard.setBorder(BorderFactory.createEmptyBorder());
+        gameBoard.setBackground(Color.getHSBColor((float) 0.079, (float) 0.275, (float) 1));
+        CompoundBorder gameBorder = new CompoundBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+                BorderFactory.createEmptyBorder(20, 30, 20, 20));
+        gameBoard.setBorder(gameBorder);
+
         gamePanel.add(gameBoard);
+        gamePanel.setBackground(Color.getHSBColor((float) 0.077, (float) 0.607, (float) 0.957));
+        JPanel empPanel = new JPanel();
+        empPanel.setBackground(Color.getHSBColor((float) 0.077, (float) 0.607, (float) 0.957));
+        gamePanel.add(empPanel, BorderLayout.CENTER);
+        gamePanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
 
         frame.add(gamePanel, BorderLayout.NORTH);
 
@@ -56,23 +61,31 @@ public class GUIController implements ActionListener{
 
         JButton shuffleButton = new JButton("Shuffle");
         shuffleButton.addActionListener(this);
-        shuffleButton.setBackground(white);
+        shuffleButton.setBackground(Color.getHSBColor((float)0.1,(float)0.322, (float)1.0));
+        shuffleButton.setPreferredSize(new Dimension(100, 30));
 
         shufflePanel.add(shuffleButton);
+        shufflePanel.add(new JPanel(), BorderLayout.SOUTH);
+        shufflePanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 25, 20));
 
         frame.add(shufflePanel, BorderLayout.CENTER);
+
+
 
         //bottom panel with playing word structure
         JPanel wordPanel = new JPanel();
 
         JButton playWord = new JButton("Play");
         playWord.addActionListener(this);
+        playWord.setBackground(white);
         JLabel entryLabel = new JLabel("Enter a word: ");
         wordEntry = new JTextField(20);
 
         wordPanel.add(entryLabel);
         wordPanel.add(wordEntry);
         wordPanel.add(playWord);
+        wordPanel.add(new JPanel(), BorderLayout.SOUTH);
+        wordPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 25, 0));
 
         frame.add(wordPanel, BorderLayout.SOUTH);
 

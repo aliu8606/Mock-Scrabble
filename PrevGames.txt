@@ -1,1 +1,7 @@
-uwu|0
+uwu|33,false
+opop|13,false
+lalal|38,false
+:)|18,false
+hohoohoh|48,true
+pwp|107,false
+j|13,true
