@@ -18,6 +18,7 @@ public class GUIController implements ActionListener{
     public GUIController(Game g) {
         gameBoard = new JEditorPane();
         currGame = g;
+        wordEntry = new JTextField(20);
         frame = new JFrame("Welcome to mock-Scrabble!");
 
         setUp();
@@ -79,7 +80,6 @@ public class GUIController implements ActionListener{
         playWord.addActionListener(this);
         playWord.setBackground(white);
         JLabel entryLabel = new JLabel("Enter a word: ");
-        wordEntry = new JTextField(20);
 
         wordPanel.add(entryLabel);
         wordPanel.add(wordEntry);

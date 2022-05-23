@@ -198,15 +198,14 @@ public class Game implements Comparable<Game>{
                         top = middle - 1;
                     }
                 }
-                return isValid;
             }
             scan.close();
+            return isValid;
         }
         catch (FileNotFoundException e){
             System.out.println("Error. Dictionary not found. Was it deleted?");
             return false;
         }
-        return false;
     }
 
     private Letter[] constructLetters() {
