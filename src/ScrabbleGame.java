@@ -30,15 +30,6 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
         }
     }
 
-    //Constructor used for testing
-    public ScrabbleGame(String user, ArrayList<Letter> board) {
-        username = user;
-        score = 0;
-        letters = constructLetters();
-        userWords = new ArrayList<String>();
-        gameBoard = board;
-    }
-
     //Constructor used for saving
     public ScrabbleGame(String user, int scr, boolean hard) {
         username = user;
