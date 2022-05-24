@@ -9,29 +9,29 @@ import java.awt.event.WindowEvent;
 
 import static java.awt.Color.white;
 
-public class GUIController implements ActionListener{
+public class ScrabbleGUI implements ActionListener{
     private JEditorPane gameBoard;
-    private JTextField wordEntry;
-    private Game currGame;
-    private JFrame frame;
+    private JTextField playWordEntry;
+    private ScrabbleGame currScrabGame;
+    private JFrame gameFrame;
 
-    public GUIController(Game g) {
+    public ScrabbleGUI(ScrabbleGame g) {
         gameBoard = new JEditorPane();
-        currGame = g;
-        wordEntry = new JTextField(20);
-        frame = new JFrame("Welcome to mock-Scrabble!");
+        currScrabGame = g;
+        playWordEntry = new JTextField(20);
+        gameFrame = new JFrame("Welcome to mock-Scrabble!");
 
         setUp();
         load();
     }
 
     private void setUp() {
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
+        gameFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        gameFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                currGame.saveGame();
-                frame.dispose();
+                currScrabGame.saveGame();
+                gameFrame.dispose();
                 System.out.println("\nWhew! What a game!");
             }
         });
@@ -39,7 +39,7 @@ public class GUIController implements ActionListener{
         //top panel with game board and data
         JPanel gamePanel = new JPanel();
 
-        gameBoard.setText(currGame.toString());
+        gameBoard.setText(currScrabGame.toString());
         gameBoard.setPreferredSize(new Dimension(1000, 500));
         gameBoard.setEditable(false);
         gameBoard.setFont(new Font("SansSerif", Font.PLAIN, 20));
@@ -55,7 +55,7 @@ public class GUIController implements ActionListener{
         gamePanel.add(empPanel, BorderLayout.CENTER);
         gamePanel.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
 
-        frame.add(gamePanel, BorderLayout.NORTH);
+        gameFrame.add(gamePanel, BorderLayout.NORTH);
 
         //middle panel with shuffle-board button
         JPanel shufflePanel = new JPanel();
@@ -69,46 +69,46 @@ public class GUIController implements ActionListener{
         shufflePanel.add(new JPanel(), BorderLayout.SOUTH);
         shufflePanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 25, 20));
 
-        frame.add(shufflePanel, BorderLayout.CENTER);
+        gameFrame.add(shufflePanel, BorderLayout.CENTER);
 
 
 
         //bottom panel with playing word structure
         JPanel wordPanel = new JPanel();
 
-        JButton playWord = new JButton("Play");
-        playWord.addActionListener(this);
-        playWord.setBackground(white);
+        JButton playWordButton = new JButton("Play");
+        playWordButton.addActionListener(this);
+        playWordButton.setBackground(white);
         JLabel entryLabel = new JLabel("Enter a word: ");
 
         wordPanel.add(entryLabel);
-        wordPanel.add(wordEntry);
-        wordPanel.add(playWord);
+        wordPanel.add(playWordEntry);
+        wordPanel.add(playWordButton);
         wordPanel.add(new JPanel(), BorderLayout.SOUTH);
         wordPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 25, 0));
 
-        frame.add(wordPanel, BorderLayout.SOUTH);
+        gameFrame.add(wordPanel, BorderLayout.SOUTH);
 
-        frame.pack();
-        frame.setVisible(true);
+        gameFrame.pack();
+        gameFrame.setVisible(true);
     }
 
     public void load() {
-        gameBoard.setText(currGame.toString());
+        gameBoard.setText(currScrabGame.toString());
     }
 
     public void actionPerformed(ActionEvent event) {
         JButton button = (JButton) (event.getSource());
-        String text = button.getText();
+        String buttonText = button.getText();
 
 
-        if (text.equals("Shuffle")) {
-            currGame.shuffle();
-            gameBoard.setText(currGame.toString());
+        if (buttonText.equals("Shuffle")) {
+            currScrabGame.shuffle();
+            gameBoard.setText(currScrabGame.toString());
         }
-        if (text.equals("Play")) {
-            String word = wordEntry.getText();
-            gameBoard.setText(currGame.updateBoard(word));
+        if (buttonText.equals("Play")) {
+            String word = playWordEntry.getText();
+            gameBoard.setText(currScrabGame.updateBoard(word));
         }
     }
 }

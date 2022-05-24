@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.*;
 import java.util.Scanner;
 
-public class Game implements Comparable<Game>{
+public class ScrabbleGame implements Comparable<ScrabbleGame>{
     private String username;
     private int score;
     private boolean hardMode;
@@ -15,7 +15,7 @@ public class Game implements Comparable<Game>{
     private ArrayList<Letter> gameBoard;
     private final int DICTION_LEN = 3000;
 
-    public Game(String user, boolean diffHard) {
+    public ScrabbleGame(String user, boolean diffHard) {
         username = user;
         score = 0;
         letters = constructLetters();
@@ -31,7 +31,7 @@ public class Game implements Comparable<Game>{
     }
 
     //Constructor used for testing
-    public Game(String user, ArrayList<Letter> board) {
+    public ScrabbleGame(String user, ArrayList<Letter> board) {
         username = user;
         score = 0;
         letters = constructLetters();
@@ -40,7 +40,7 @@ public class Game implements Comparable<Game>{
     }
 
     //Constructor used for saving
-    public Game(String user, int scr, boolean hard) {
+    public ScrabbleGame(String user, int scr, boolean hard) {
         username = user;
         score = scr;
         hardMode = hard;
@@ -132,7 +132,7 @@ public class Game implements Comparable<Game>{
     }
 
     @Override
-    public int compareTo(Game other) {
+    public int compareTo(ScrabbleGame other) {
         return other.getScore() - this.getScore();
     }
 
@@ -167,39 +167,39 @@ public class Game implements Comparable<Game>{
         try {
             //opens file and starts reading
             File dictionary = new File("src/Dictionary");
-            Scanner scan = new Scanner(dictionary);
+            Scanner dictionScanner = new Scanner(dictionary);
 
-            while(scan.hasNextLine()) {
+            while(dictionScanner.hasNextLine()) {
                 //Binary search to find if a line in Dictionary matches target word
-                String line = "";
-                int bottom = 0;
-                int top = DICTION_LEN;
+                String currLine = "";
+                int min = 0;
+                int max = DICTION_LEN;
                 int middle;
 
-                while (bottom <= top){
-                    middle = (bottom + top) / 2;
+                while (min <= max){
+                    middle = (min + max) / 2;
                     try {
-                        line = Files.readAllLines(Paths.get("src/Dictionary")).get(middle).toLowerCase();
+                        currLine = Files.readAllLines(Paths.get("src/Dictionary")).get(middle).toLowerCase();
                     }
                     catch(IOException e) {
                         e.printStackTrace();
                         return false;
                     }
 
-                    int compare = line.compareTo(word);
-                    if (compare == 0){
+                    int comparedTo = currLine.compareTo(word);
+                    if (comparedTo == 0){
                         isValid = true;
                         break;
                     }
-                    else if (compare < 0){
-                        bottom = middle + 1;
+                    else if (comparedTo < 0){
+                        min = middle + 1;
                     }
                     else {
-                        top = middle - 1;
+                        max = middle - 1;
                     }
                 }
             }
-            scan.close();
+            dictionScanner.close();
             return isValid;
         }
         catch (FileNotFoundException e){
@@ -220,12 +220,12 @@ public class Game implements Comparable<Game>{
         int[] pts = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3,
                 10, 1, 1, 1, 1, 4, 4, 8, 4, 10};
 
-        Letter[] tiles = new Letter[26];
-        for (int i = 0; i < tiles.length; i++) {
-            tiles[i] = new Letter(lets[i], pts[i]);
+        Letter[] letters = new Letter[26];
+        for (int i = 0; i < letters.length; i++) {
+            letters[i] = new Letter(lets[i], pts[i]);
         }
 
-        return tiles;
+        return letters;
     }
 
     /**

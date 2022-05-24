@@ -5,3 +5,4 @@ lalal|38,false
 hohoohoh|48,true
 pwp|107,false
 j|13,true
+ku|0,false

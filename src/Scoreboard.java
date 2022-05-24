@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Scoreboard {
-    private ArrayList<Game> pastGames;
+    private ArrayList<ScrabbleGame> pastGames;
 
     public Scoreboard() {
         try {
-            File file = new File("PrevGames.txt");
-            Scanner reader = new Scanner(file);
-            pastGames = new ArrayList<Game>();
+            File gameHistory = new File("PrevGames.txt");
+            Scanner reader = new Scanner(gameHistory);
+            pastGames = new ArrayList<ScrabbleGame>();
 
             while (reader.hasNextLine()) {
                 String line = reader.nextLine();
@@ -20,7 +20,7 @@ public class Scoreboard {
                         line.indexOf(",")));
                 String mode = line.substring(line.indexOf(",") + 1);
                 boolean hard = mode.equals("true");
-                pastGames.add(new Game(user, score, hard));
+                pastGames.add(new ScrabbleGame(user, score, hard));
             }
             reader.close();
 
@@ -32,12 +32,12 @@ public class Scoreboard {
     }
 
     public String toString() {
-        String sb = "";
+        String result = "";
         for (int i = 0; i < pastGames.size(); i++) {
-            sb += (i + 1) + ". " + pastGames.get(i).getUsername() +
+            result += (i + 1) + ". " + pastGames.get(i).getUsername() +
                     " " + pastGames.get(i).getScore() + " | Hard mode: " + pastGames.get(i).isHardMode() + "\n";
         }
-        return sb;
+        return result;
     }
 
 }
