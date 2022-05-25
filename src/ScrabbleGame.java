@@ -13,7 +13,7 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
     private Letter[] letters;
     private ArrayList<String> userWords;
     private ArrayList<Letter> gameBoard;
-    private final int DICTION_LEN = 3000;
+    private final int DICTION_LEN = 2999;
 
     public ScrabbleGame(String user, boolean diffHard) {
         username = user;
@@ -149,18 +149,19 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
             }
             //otherwise, reset for the next loop
             isPresent = false;
-        }
-
+        };
         //Check is word is a legitimate English word
         word = word.toLowerCase();
         boolean isValid = false;
 
         try {
             //opens file and starts reading
-            File dictionary = new File("src/Dictionary");
+            File dictionary = new File("C:\\Users\\BT_1E10_24\\IdeaProjects\\" +
+                    "Angie Liu\\Mock-Scrabble\\src\\Dictionary");
             Scanner dictionScanner = new Scanner(dictionary);
 
             while(dictionScanner.hasNextLine()) {
+
                 //Binary search to find if a line in Dictionary matches target word
                 String currLine = "";
                 int min = 0;
@@ -170,7 +171,9 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
                 while (min <= max){
                     middle = (min + max) / 2;
                     try {
-                        currLine = Files.readAllLines(Paths.get("src/Dictionary")).get(middle).toLowerCase();
+                        currLine = Files.readAllLines(Paths.get("C:\\Users\\BT_1E10_24\\" +
+                                "IdeaProjects\\Angie Liu\\Mock-Scrabble\\src\\Dictionary"))
+                                .get(middle).toLowerCase();
                     }
                     catch(IOException e) {
                         e.printStackTrace();
@@ -189,9 +192,10 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
                         max = middle - 1;
                     }
                 }
+                return isValid;
             }
             dictionScanner.close();
-            return isValid;
+            return false;
         }
         catch (FileNotFoundException e){
             System.out.println("Error. Dictionary not found. Was it deleted?");
