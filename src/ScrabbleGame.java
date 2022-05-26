@@ -13,7 +13,7 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
     private Letter[] letters;
     private ArrayList<String> userWords;
     private ArrayList<Letter> gameBoard;
-    private final int DICTION_LEN = 2999;
+    private int dictionLen = 2999;
 
     public ScrabbleGame(String user, boolean diffHard) {
         username = user;
@@ -149,7 +149,7 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
             }
             //otherwise, reset for the next loop
             isPresent = false;
-        };
+        }
         //Check is word is a legitimate English word
         word = word.toLowerCase();
         boolean isValid = false;
@@ -165,7 +165,7 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
                 //Binary search to find if a line in Dictionary matches target word
                 String currLine = "";
                 int min = 0;
-                int max = DICTION_LEN;
+                int max = dictionLen;
                 int middle;
 
                 while (min <= max){
