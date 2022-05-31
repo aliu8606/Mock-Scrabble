@@ -156,8 +156,8 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
 
         try {
             //opens file and starts reading
-            File dictionary = new File("C:\\Users\\BT_1E10_24\\IdeaProjects\\" +
-                    "Angie Liu\\Mock-Scrabble\\src\\Dictionary");
+            File dictionary = new File
+                    ("src/Dictionary");
             Scanner dictionScanner = new Scanner(dictionary);
 
             while(dictionScanner.hasNextLine()) {
@@ -171,8 +171,7 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
                 while (min <= max){
                     middle = (min + max) / 2;
                     try {
-                        currLine = Files.readAllLines(Paths.get("C:\\Users\\BT_1E10_24\\" +
-                                "IdeaProjects\\Angie Liu\\Mock-Scrabble\\src\\Dictionary"))
+                        currLine = Files.readAllLines(Paths.get(dictionary.getAbsolutePath()))
                                 .get(middle).toLowerCase();
                     }
                     catch(IOException e) {
