@@ -8,5 +8,3 @@ j|13,true
 ku|0,false
 aaaaaaaaaaaaaaaaaa|37,false
 uuu|19,true
-sdadsadas|26,false
-adsdsa|27,false

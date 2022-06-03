@@ -108,8 +108,8 @@ public class ScrabbleGUI implements ActionListener{
         if (buttonText.equals("Play")) {
             String word = playWordEntry.getText();
 
-            gameBoard.setText(currScrabGame.playerTurn(word));
-            Timer timer = new Timer(1000, e -> {
+            gameBoard.setText(currScrabGame.playWord(word, false));
+            Timer timer = new Timer(2000, e -> {
                 gameBoard.setText(currScrabGame.botTurn());
             } );
             timer.setRepeats(false);

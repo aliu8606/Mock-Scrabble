@@ -44,19 +44,11 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
         return user;
     }
 
-    public ScrabblePlayer getBot() {
-        return bot;
-    }
-
-    public ArrayList<Letter> getGameBoard() {
-        return gameBoard;
-    }
-
     public void shuffle() {
         Collections.shuffle(gameBoard);
     }
 
-    public String playerTurn(String word) {
+    public String playWord(String word, boolean isBot) {
         //Checks if word is a valid word to play
         if (check(word)) {
             word = word.toUpperCase();
@@ -66,7 +58,12 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
                 for (int i = 0; i < gameBoard.size(); i++) {
                     if (chr.equals(gameBoard.get(i).getLetter())) {
                         //Updating score
-                        user.addScore(gameBoard.get(i).getPoints());
+                        if (isBot) {
+                            bot.addScore(gameBoard.get(i).getPoints());
+                        }
+                        else {
+                            user.addScore(gameBoard.get(i).getPoints());
+                        }
 
                         //Removing Letter from board
                         gameBoard.remove(i);
@@ -77,20 +74,30 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
             }
 
             //Points are also given for length of the word
-            user.addScore(chars.length);
-
-            //Adds word to userWords
+            //Plus, word is added to their word lists
             word = word.toLowerCase();
-            user.addWord(word);
+            if (isBot) {
+                bot.addScore(chars.length);
+                bot.addWord(word);
+            }
+            else {
+                user.addScore(chars.length);
+                user.addWord(word);
+            }
 
             return toString();
         }
 
-        return this + "\n" + word + " is not a valid word\n";
+        if (isBot) {
+            return this + "\nBot is thinking...";
+        }
+        else {
+            return this + "\n" + word + " is not a valid word\n";
+        }
     }
 
     public String botTurn() {
-        int randLen = (int) (Math.random() * (6 - 2)) + 3;
+        int randLen = (int) (Math.random() * (5 - 2)) + 3;
         ArrayList<String> letters = new ArrayList<>();
 
         for (int i = 0; i < randLen; i++) {
@@ -102,45 +109,11 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
 
         for (String word : possibleWords) {
             if (check(word)) {
-                return botPlay(word);
+                return playWord(word, true);
             }
         }
 
-        return botPlay("n/a");
-    }
-
-    public String botPlay(String word) {
-        //Checks if word is a valid word to play
-        if (check(word)) {
-            word = word.toUpperCase();
-            String[] chars = word.split("");
-
-            for (String chr : chars) {
-                for (int i = 0; i < gameBoard.size(); i++) {
-                    if (chr.equals(gameBoard.get(i).getLetter())) {
-                        //Updating score
-                        bot.addScore(gameBoard.get(i).getPoints());
-
-                        //Removing Letter from board
-                        gameBoard.remove(i);
-                        i--;
-                        break;
-                    }
-                }
-            }
-
-            //Points are also given for length of the word
-            bot.addScore(chars.length);
-
-            //Adds word to userWords
-            word = word.toLowerCase();
-            bot.addWord(word);
-
-            return toString();
-        }
-        else {
-            return this + "\nBot is thinking...";
-        }
+        return playWord("n/a", true);
     }
 
     public void saveGame() {
