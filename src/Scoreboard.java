@@ -34,8 +34,8 @@ public class Scoreboard {
     public String toString() {
         String result = "";
         for (int i = 0; i < pastGames.size(); i++) {
-            result += (i + 1) + ". " + pastGames.get(i).getUsername() +
-                    " " + pastGames.get(i).getScore() + " | Hard mode: " + pastGames.get(i).isHardMode() + "\n";
+            result += (i + 1) + ". " + pastGames.get(i).getUser().getName() +
+                    " " + pastGames.get(i).getUser().getScore() + " | Hard mode: " + pastGames.get(i).isHardMode() + "\n";
         }
         return result;
     }

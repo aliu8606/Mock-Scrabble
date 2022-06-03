@@ -7,19 +7,18 @@ import java.util.*;
 import java.util.Scanner;
 
 public class ScrabbleGame implements Comparable<ScrabbleGame>{
-    private String username;
-    private int score;
+    private ScrabblePlayer user;
+    private ScrabblePlayer bot;
     private boolean hardMode;
     private Letter[] letters;
-    private ArrayList<String> userWords;
     private ArrayList<Letter> gameBoard;
     private int dictionLen = 2999;
 
-    public ScrabbleGame(String user, boolean diffHard) {
-        username = user;
-        score = 0;
+    public ScrabbleGame(String username, boolean diffHard) {
+        user = new ScrabblePlayer(username);
+        bot = new ScrabblePlayer();
+
         letters = constructLetters();
-        userWords = new ArrayList<String>();
 
         hardMode = diffHard;
         if (hardMode) {
@@ -28,32 +27,36 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
         else {
             gameBoard = startBoard(60, 45);
         }
+
     }
 
     //Constructor used for saving
-    public ScrabbleGame(String user, int scr, boolean hard) {
-        username = user;
-        score = scr;
+    public ScrabbleGame(String name, int scr, boolean hard) {
+        user = new ScrabblePlayer(name, scr);
         hardMode = hard;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public int getScore() {
-        return score;
     }
 
     public boolean isHardMode() {
         return hardMode;
     }
 
+    public ScrabblePlayer getUser() {
+        return user;
+    }
+
+    public ScrabblePlayer getBot() {
+        return bot;
+    }
+
+    public ArrayList<Letter> getGameBoard() {
+        return gameBoard;
+    }
+
     public void shuffle() {
         Collections.shuffle(gameBoard);
     }
 
-    public String updateBoard(String word) {
+    public String playerTurn(String word) {
         //Checks if word is a valid word to play
         if (check(word)) {
             word = word.toUpperCase();
@@ -63,7 +66,7 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
                 for (int i = 0; i < gameBoard.size(); i++) {
                     if (chr.equals(gameBoard.get(i).getLetter())) {
                         //Updating score
-                        score += gameBoard.get(i).getPoints();
+                        user.addScore(gameBoard.get(i).getPoints());
 
                         //Removing Letter from board
                         gameBoard.remove(i);
@@ -74,11 +77,11 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
             }
 
             //Points are also given for length of the word
-            score += chars.length;
+            user.addScore(chars.length);
 
             //Adds word to userWords
             word = word.toLowerCase();
-            userWords.add(word);
+            user.addWord(word);
 
             return toString();
         }
@@ -86,10 +89,64 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
         return this + "\n" + word + " is not a valid word\n";
     }
 
+    public String botTurn() {
+        int randLen = (int) (Math.random() * (6 - 2)) + 3;
+        ArrayList<String> letters = new ArrayList<>();
+
+        for (int i = 0; i < randLen; i++) {
+            letters.add(gameBoard.get(i).getLetter());
+        }
+
+        ArrayList<String> possibleWords = new ArrayList<>();
+        createWords(possibleWords, letters, 0, letters.size() - 1);
+
+        for (String word : possibleWords) {
+            if (check(word)) {
+                return botPlay(word);
+            }
+        }
+
+        return botPlay("n/a");
+    }
+
+    public String botPlay(String word) {
+        //Checks if word is a valid word to play
+        if (check(word)) {
+            word = word.toUpperCase();
+            String[] chars = word.split("");
+
+            for (String chr : chars) {
+                for (int i = 0; i < gameBoard.size(); i++) {
+                    if (chr.equals(gameBoard.get(i).getLetter())) {
+                        //Updating score
+                        bot.addScore(gameBoard.get(i).getPoints());
+
+                        //Removing Letter from board
+                        gameBoard.remove(i);
+                        i--;
+                        break;
+                    }
+                }
+            }
+
+            //Points are also given for length of the word
+            bot.addScore(chars.length);
+
+            //Adds word to userWords
+            word = word.toLowerCase();
+            bot.addWord(word);
+
+            return toString();
+        }
+        else {
+            return this + "\nBot is thinking...";
+        }
+    }
+
     public void saveGame() {
         try {
             FileWriter writer = new FileWriter("PrevGames.txt", true);
-            String gameData = username + "|" + score + "," + hardMode + "\n";
+            String gameData = user.getName() + "|" + user.getScore() + "," + hardMode + "\n";
             writer.append(gameData);
             writer.close();
         }
@@ -112,19 +169,42 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
         }
         board += "\n=========================================\n";
 
-        //Formats Game data
-        String data = "Player: " + username + "\nWordlist: \n";
-        for (int i = 0; i < userWords.size(); i++) {
-            data += (i + 1) + ". " + userWords.get(i) + "\n";
+        //Formats Player Game data
+        String data = "Player: " + user.getName() + "\nWordlist: \n";
+        for (int i = 0; i < user.getWords().size(); i++) {
+            data += (i + 1) + ". " + user.getWords().get(i) + "\n";
         }
-        data += "Current Score: " + score + "\n";
+        data += "Current Score: " + user.getScore() + "\n\n";
+
+        //Formats Bot Game data
+        data += "Bot: " + "\nWordlist: \n";
+        for (int i = 0; i < bot.getWords().size(); i++) {
+            data += (i + 1) + ". " + bot.getWords().get(i) + "\n";
+        }
+        data += "Current Score: " + bot.getScore() + "\n";
 
         return board + data;
     }
 
     @Override
     public int compareTo(ScrabbleGame other) {
-        return other.getScore() - this.getScore();
+        return other.getUser().getScore() - this.getUser().getScore();
+    }
+
+    private void createWords(ArrayList<String> words, ArrayList<String> letters, int index, int end) {
+        if (index == end) {
+            words.add(String.join(",", letters).replaceAll(",", ""));
+            for (int i = 3; i < letters.size(); i++) {
+                words.add(String.join(",", letters).replaceAll(",", "").substring(0, i));
+            }
+        }
+        else {
+            for (int curr = index; curr <= end; curr++) {
+                Collections.swap(letters, index, curr);
+                createWords(words, letters, index + 1, end);
+                Collections.swap(letters, index, curr);
+            }
+        }
     }
 
     private boolean check(String word) {
@@ -150,56 +230,55 @@ public class ScrabbleGame implements Comparable<ScrabbleGame>{
             //otherwise, reset for the next loop
             isPresent = false;
         }
-        //Check is word is a legitimate English word
-        word = word.toLowerCase();
-        boolean isValid = false;
 
-        try {
-            //opens file and starts reading
-            File dictionary = new File
-                    ("src/Dictionary");
-            Scanner dictionScanner = new Scanner(dictionary);
 
-            while(dictionScanner.hasNextLine()) {
+            //Check is word is a legitimate English word
+            word = word.toLowerCase();
+            boolean isValid = false;
 
-                //Binary search to find if a line in Dictionary matches target word
-                String currLine = "";
-                int min = 0;
-                int max = dictionLen;
-                int middle;
+            try {
+                //opens file and starts reading
+                File dictionary = new File
+                        ("src/Dictionary");
+                Scanner dictionScanner = new Scanner(dictionary);
 
-                while (min <= max){
-                    middle = (min + max) / 2;
-                    try {
-                        currLine = Files.readAllLines(Paths.get(dictionary.getAbsolutePath()))
-                                .get(middle).toLowerCase();
-                    }
-                    catch(IOException e) {
-                        e.printStackTrace();
-                        return false;
-                    }
+                while (dictionScanner.hasNextLine()) {
 
-                    int comparedTo = currLine.compareTo(word);
-                    if (comparedTo == 0){
-                        isValid = true;
-                        break;
+                    //Binary search to find if a line in Dictionary matches target word
+                    String currLine = "";
+                    int min = 0;
+                    int max = dictionLen;
+                    int middle;
+
+                    while (min <= max) {
+                        middle = (min + max) / 2;
+                        try {
+                            currLine = Files.readAllLines(Paths.get(dictionary.getAbsolutePath()))
+                                    .get(middle).toLowerCase();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+
+                        int comparedTo = currLine.compareTo(word);
+                        if (comparedTo == 0) {
+                            isValid = true;
+                            break;
+                        } else if (comparedTo < 0) {
+                            min = middle + 1;
+                        } else {
+                            max = middle - 1;
+                        }
                     }
-                    else if (comparedTo < 0){
-                        min = middle + 1;
-                    }
-                    else {
-                        max = middle - 1;
-                    }
+                    return isValid;
                 }
-                return isValid;
+                dictionScanner.close();
+                return false;
+            } catch (FileNotFoundException e) {
+                System.out.println("Error. Dictionary not found. Was it deleted?");
+                return false;
             }
-            dictionScanner.close();
-            return false;
-        }
-        catch (FileNotFoundException e){
-            System.out.println("Error. Dictionary not found. Was it deleted?");
-            return false;
-        }
+
     }
 
     private Letter[] constructLetters() {

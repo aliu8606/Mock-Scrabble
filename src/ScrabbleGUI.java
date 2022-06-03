@@ -97,10 +97,9 @@ public class ScrabbleGUI implements ActionListener{
         gameBoard.setText(currScrabGame.toString());
     }
 
-    public void actionPerformed(ActionEvent event) {
+    public void actionPerformed(ActionEvent event){
         JButton button = (JButton) (event.getSource());
         String buttonText = button.getText();
-
 
         if (buttonText.equals("Shuffle")) {
             currScrabGame.shuffle();
@@ -108,7 +107,14 @@ public class ScrabbleGUI implements ActionListener{
         }
         if (buttonText.equals("Play")) {
             String word = playWordEntry.getText();
-            gameBoard.setText(currScrabGame.updateBoard(word));
+
+            gameBoard.setText(currScrabGame.playerTurn(word));
+            Timer timer = new Timer(1000, e -> {
+                gameBoard.setText(currScrabGame.botTurn());
+            } );
+            timer.setRepeats(false);
+            timer.start();
+
         }
     }
 }
